@@ -1,5 +1,6 @@
 <?php
 
+session_start();
 include("db.inc.php");
 
 Class Login {
@@ -7,7 +8,6 @@ Class Login {
 	private $_db; // Database object.
 
 	public function __construct(){
-		session_start();
 		$this->_initDB();
 	}
 
