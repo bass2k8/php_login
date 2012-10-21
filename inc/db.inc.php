@@ -52,12 +52,14 @@ Class Database {
 	// Querying the Database.
 	public function query($sql){
 		mysql_query($sql, $this->_connection) or die("Could not select db: ".mysql_error());
+		if($this->_logging) $this->_log("Queried <strong>".$sql."</strong> successfully.");
 	}
 
 	// Select a Table.
 	public function selectTable($table, $parameters){
 		if(!$parameters) $this->query("SELECT * FROM ".$table);
-		else $this->query("SELECT * FROM ".$table.$parametes);
+		else $this->query("SELECT * FROM ".$table." ".$parameters);
+		if($this->_logging) $this->_log("Selected <strong>".$table."</strong> successfully.");
 	}
 
 }
