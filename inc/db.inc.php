@@ -25,14 +25,16 @@ Class Database {
 		}
 	}
 
+	// Add to the log.
 	private function _log($text){
 		array_push($this->_log, $text);
 	}
 
+	// Output the log in an un-ordered list.
 	public function outputLog(){
 		echo "<ul id=\"database_log\">\n";
 		foreach ($this->_log as $log) {
-			echo "<li>".$log."</li>\n";
+			echo "\t<li>".$log."</li>\n";
 		}
 		echo "</ul>\n";
 	}
@@ -40,13 +42,13 @@ Class Database {
 	// Connecting to the Database Server.
 	private function _connect(){
 		$this->_connection = mysql_connect(DB_SERVER, DB_USER, DB_PASS) or die("Could not connect to server: ".mysql_error());
-		if($this->_logging) $this->_log("Connected to ".DB_SERVER." successfully.");
+		if($this->_logging) $this->_log("Connected to <strong>".DB_SERVER."</strong> successfully.");
 	}
 
 	// Selecting the Database.
 	private function _selectDatabase(){
 		mysql_select_db($this->_dbName, $this->_connection) or die("Could not select db: ".mysql_error());
-		if($this->_logging) $this->_log("Selected ".DB_DATABASE." successfully.");
+		if($this->_logging) $this->_log("Selected <strong>".DB_DATABASE."</strong> successfully.");
 	}
 
 	// Querying the Database.
