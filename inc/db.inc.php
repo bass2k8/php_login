@@ -48,7 +48,7 @@ Class Database {
 	// Selecting the Database.
 	private function _selectDatabase(){
 		mysql_select_db($this->_dbName, $this->_connection) or die("Could not select db: ".mysql_error());
-		if($this->_logging) $this->_log("Selected <strong>".DB_DATABASE."</strong> successfully.");
+		if($this->_logging) $this->_log("Selected <strong>".$this->_dbName."</strong> successfully.");
 	}
 
 	// Querying the Database.
