@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.4.11.1
+-- version 3.5.2.2
 -- http://www.phpmyadmin.net
 --
--- Host: localhost
--- Generation Time: Oct 21, 2012 at 02:39 PM
--- Server version: 5.1.65
--- PHP Version: 5.2.17
+-- Host: 127.0.0.1
+-- Generation Time: Dec 31, 2012 at 12:27 AM
+-- Server version: 5.5.27
+-- PHP Version: 5.4.7
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,8 +17,11 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `bass2k8_login`
+-- Database: `php_login`
 --
+
+CREATE DATABASE IF NOT EXISTS `php_login` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `php_login`;
 
 -- --------------------------------------------------------
 
@@ -27,12 +30,13 @@ SET time_zone = "+00:00";
 --
 
 DROP TABLE IF EXISTS `contact`;
-
 CREATE TABLE IF NOT EXISTS `contact` (
-  `contact_id` int(11) NOT NULL AUTO_INCREMENT,
-  `email_addr` varchar(40) NOT NULL,
-  PRIMARY KEY (`contact_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+  `con_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `con_email_address` varchar(80) NOT NULL,
+  PRIMARY KEY (`con_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -41,18 +45,18 @@ CREATE TABLE IF NOT EXISTS `contact` (
 --
 
 DROP TABLE IF EXISTS `log`;
-
 CREATE TABLE IF NOT EXISTS `log` (
   `log_id` int(11) NOT NULL AUTO_INCREMENT,
-  `remote_addr` varchar(15) NOT NULL,
-  `server_addr` varchar(15) NOT NULL,
-  `server_name` varchar(30) NOT NULL,
-  `script_name` varchar(40) NOT NULL,
-  `query_string` varchar(40) NOT NULL,
-  `timestamp` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  PRIMARY KEY (`log_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+  `log_remote_addr` varchar(15) NOT NULL,
+  `log_server_addr` varchar(15) NOT NULL,
+  `log_server_name` varchar(30) NOT NULL,
+  `log_script_name` varchar(40) NOT NULL,
+  `log_query_string` varchar(40) NOT NULL,
+  `log_timestamp` int(11) NOT NULL,
+  PRIMARY KEY (`log_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -61,14 +65,15 @@ CREATE TABLE IF NOT EXISTS `log` (
 --
 
 DROP TABLE IF EXISTS `personal`;
-
 CREATE TABLE IF NOT EXISTS `personal` (
-  `personal_id` int(11) NOT NULL AUTO_INCREMENT,
-  `fname` varchar(15) NOT NULL,
-  `sname` varchar(15) NOT NULL,
-  `sex` tinyint(1) NOT NULL,
-  PRIMARY KEY (`personal_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+  `pers_id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `pers_forename` varchar(15) NOT NULL,
+  `pers_surname` varchar(15) NOT NULL,
+  `pers_sex` tinyint(1) NOT NULL,
+  PRIMARY KEY (`pers_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -77,16 +82,34 @@ CREATE TABLE IF NOT EXISTS `personal` (
 --
 
 DROP TABLE IF EXISTS `user`;
-
 CREATE TABLE IF NOT EXISTS `user` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
-  `user` varchar(14) NOT NULL,
-  `pass` varchar(32) NOT NULL,
-  `contact_id` int(11) NOT NULL,
-  `personal_id` int(11) NOT NULL,
-  PRIMARY KEY (`user_id`),
-  UNIQUE KEY `contact_id` (`contact_id`,`personal_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+  `user_name` varchar(14) NOT NULL,
+  `user_password` varchar(32) NOT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `contact`
+--
+ALTER TABLE `contact`
+  ADD CONSTRAINT `contact_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `log`
+--
+ALTER TABLE `log`
+  ADD CONSTRAINT `log_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `personal`
+--
+ALTER TABLE `personal`
+  ADD CONSTRAINT `personal_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
