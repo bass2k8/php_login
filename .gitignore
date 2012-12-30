@@ -163,4 +163,4 @@ pip-log.txt
 .DS_Store
 
 # Custom
-inc\constants.inc.php
+inc/constants.inc.php
