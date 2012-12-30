@@ -1,7 +1,7 @@
 <?php
 
 require_once("inc/db.inc.php");
-$db = new Database("bass2k8_login");
+$db = new Database("php_login", true);
 
 echo "Hello World";
 
