@@ -9,13 +9,15 @@ Class Database {
 	private $_logging=false; // Define whether to output logging or not.
 
 	private $_dbName; // Name of the Database.
-	private $_query; // SQL Query.
 	private $_db; // PDO database object.
+	private $_query; // SQL Query.
+	
+	private $_tableSelected; // Whether a table is selected or not.
 
 	public function __construct($dbName, $logging){
 		// Initialising the variables.
 		$this->_dbName = $dbName;
-		$this->_query=false;
+		$this->_query=$this->_tableSelected=false;
 		$this->_logging=$logging;
 
 		// Create a log object, if logging is enabled.
@@ -86,16 +88,23 @@ Class Database {
 
 	// Fetch association.
 	public function fetchAssociation(){
-		// If a query has been executed, fetch the association.
+		// If a query has been executed, continue.
 		if($this->_query){
-			$assoc = $this->_query->fetch(PDO::FETCH_ASSOC);
-			
-			// If there aren't any PDO errors, return the association.
-			if(!$this->_PDOErrors()){
-				if($this->_logging) $this->_log->addToLog("Fetched the association successfully.");
-				return $assoc;
-			} else {
-				if($this->_logging) $this->_log->addToLog("Cannot fetch association; an error occured.");
+			// If table is selected, fetch the association.
+			if($this->_tableSelected){
+				$assoc = $this->_query->fetch(PDO::FETCH_ASSOC);
+
+				// If there aren't any PDO errors, return the association.
+				if(!$this->_PDOErrors()){
+					if($this->_logging) $this->_log->addToLog("Fetched the association successfully.");
+					return $assoc;
+				} else {
+					if($this->_logging) $this->_log->addToLog("Cannot fetch association; an error occured.");
+					return false;
+				}
+			}
+			else {
+				if($this->_logging) $this->_log->addToLog("Cannot fetch association; no table is selected.");
 				return false;
 			}
 			
@@ -112,6 +121,7 @@ Class Database {
 		// If there aren't any PDO errors, return true.
 		if(!$this->_PDOErrors()){
 			if($this->_logging) $this->_log->addToLog("Selected <strong>".$table."</strong> successfully.");
+			$this->_tableSelected=true;
 			return true;
 		} else {
 			if($this->_logging) $this->_log->addToLog("Could not select <strong>".$table."</strong>.");
@@ -119,6 +129,47 @@ Class Database {
 		}
 	}
 
+	// Insert data into a table.
+	public function insertInto($table, $into_arr, $values_arr){
+		$this->_tableSelected=false; // To prevent future errors with fetching Association.
+		$into=$values="";
+
+		// If both variables are arrays, continue.
+		if(is_array($into_arr) && is_array($values_arr)){
+			// If the count of both arrays match, continue.
+			if(count($into_arr, COUNT_RECURSIVE)==count($values_arr, COUNT_RECURSIVE)){
+				// Go through into_arr array.
+				foreach($into_arr as $ia){
+					$into .= "`".$ia."`, ";  
+				}
+				$into=substr($into, 0, -2); // Remove trailing comma and white space.
+
+				// Go through values_arr array.
+				foreach($values_arr as $va){
+					$values .= "'".$va."', ";
+				}
+				$values=substr($values, 0, -2); // Remove trailing comma and white space.
+
+				// SQL statement.
+				$this->query("INSERT INTO `$table` ($into) VALUES ($values)");
+
+				// If there aren't any PDO errors, return true.
+				if(!$this->_PDOErrors()){
+					if($this->_logging) $this->_log->addToLog("Inserted into <strong>".$table."</strong> successfully.");
+					return true;
+				} else {
+					if($this->_logging) $this->_log->addToLog("Could not insert into <strong>".$table."</strong>.");
+					return false;
+				}
+			} else {
+				if($this->_logging) $this->_log->addToLog("Array count does not match.");
+				return false;
+			}
+		} else {
+			if($this->_logging) $this->_log->addToLog("An array was not supplied.");
+			return false;
+		}
+	}
 }
 
 ?>
