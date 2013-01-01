@@ -129,7 +129,7 @@ Class Database {
 		}
 	}
 
-	// Insert data into a table.
+	// Insert a row into the specified table.
 	public function insertInto($table, $into_arr, $values_arr){
 		$this->_tableSelected=false; // To prevent future errors with fetching Association.
 		$into=$values="";
@@ -161,6 +161,25 @@ Class Database {
 					if($this->_logging) $this->_log->addToLog("Could not insert into <strong>".$table."</strong>.");
 					return false;
 				}
+			} else {
+				if($this->_logging) $this->_log->addToLog("Array count does not match.");
+				return false;
+			}
+		} else {
+			if($this->_logging) $this->_log->addToLog("An array was not supplied.");
+			return false;
+		}
+	}
+
+	// Delete a row from the specified table.
+	public function deleteFrom($table, $columns_arr, $values_arr){
+		$columns=$values="";
+
+		// If both variables are arrays, continue.
+		if(is_array($into_arr) && is_array($values_arr)){
+			// If the count of both arrays match, continue.
+			if(count($into_arr, COUNT_RECURSIVE)==count($values_arr, COUNT_RECURSIVE)){
+
 			} else {
 				if($this->_logging) $this->_log->addToLog("Array count does not match.");
 				return false;
