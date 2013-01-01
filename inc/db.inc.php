@@ -26,8 +26,10 @@ Class Database {
 
 	// Close the connection to the Database Server.
 	public function __destruct(){
+		// If there already is a query, close it.
 		if($this->_query) $this->_query->closeCursor();
 		$this->_db=null;
+
 		if($this->_logging) $this->_log->addToLog("Closed connection to <strong>".DB_SERVER."</strong> successfully.");
 	}
 
@@ -36,6 +38,8 @@ Class Database {
 		// Create a PDO object.
 		$this->_db = new PDO("mysql:host=".DB_SERVER.";dbname=".$this->_dbName, DB_USER, DB_PASS);
 		$this->_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Set error mode.
+
+		// If there aren't any PDO errors, return true.
 		if(!$this->_PDOErrors()){
 			if($this->_logging) $this->_log->addToLog("Connected to <strong>".DB_SERVER."</strong> successfully.");
 			if($this->_logging) $this->_log->addToLog("Selected the database <strong>".$this->_dbName."</strong> successfully.");
@@ -50,8 +54,10 @@ Class Database {
 	// Check for any errors with PDO.
 	private function _PDOErrors(){
 		$error=$this->_db->errorInfo();
-		if(!$error[2]) return false;
-		else return true;
+
+		// If there are PDO errors, return true;
+		if($error[2]) return true;
+		else return false;
 	}
 
 	// Querying the Database.
@@ -61,18 +67,18 @@ Class Database {
 		// If there already is a query, close it.
 		if($this->_query) $this->_query->closeCursor();
 		
+		// Attempt to query the SQL.
 		try {
-			// Attempt to query the SQL.
 			$this->_query = $this->_db->query($sql);
 		} catch(PDOException $e){
-			// If an error was caught, add error to log.
+			// If an error was caught, set error_status to true and return false.
 			$error_status=true;
 			if($this->_logging) $this->_log->addToLog("<strong>Error:</strong> ".$e->getMessage());
 			return false;
 		}
 
+		// If there were no errors, return true.
 		if(!$error_status){
-			// If there were no errors.
 			if($this->_logging) $this->_log->addToLog("Queried <strong>".$sql."</strong> successfully.");
 			return true;
 		}
@@ -80,9 +86,19 @@ Class Database {
 
 	// Fetch association.
 	public function fetchAssociation(){
+		// If a query has been executed, fetch the association.
 		if($this->_query){
-			if($this->_logging) $this->_log->addToLog("Fetched the association successfully.");
-			return $this->_query->fetch(PDO::FETCH_ASSOC);
+			$assoc = $this->_query->fetch(PDO::FETCH_ASSOC);
+			
+			// If there aren't any PDO errors, return the association.
+			if(!$this->_PDOErrors()){
+				if($this->_logging) $this->_log->addToLog("Fetched the association successfully.");
+				return $assoc;
+			} else {
+				if($this->_logging) $this->_log->addToLog("Cannot fetch association; an error occured.");
+				return false;
+			}
+			
 		} else {
 			if($this->_logging) $this->_log->addToLog("Cannot fetch association; there is no query.");
 			return false;
@@ -90,8 +106,10 @@ Class Database {
 	}
 
 	// Select a Table.
-	protected function selectTable($table){
+	public function selectTable($table){
 		$this->query("SELECT * FROM `$table`");
+
+		// If there aren't any PDO errors, return true.
 		if(!$this->_PDOErrors()){
 			if($this->_logging) $this->_log->addToLog("Selected <strong>".$table."</strong> successfully.");
 			return true;
