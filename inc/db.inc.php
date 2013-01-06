@@ -14,7 +14,7 @@ Class Database {
 	
 	private $_tableSelected; // Whether a table is selected or not.
 
-	public function __construct($dbName, $logging){
+	public function __construct($dbName="", $logging=false){
 		// Initialising the variables.
 		$this->_dbName = $dbName;
 		$this->_query=$this->_tableSelected=false;
@@ -63,7 +63,7 @@ Class Database {
 	}
 
 	// Querying the Database.
-	public function query($sql){
+	public function query($sql=""){
 		$error_status=false;
 
 		// If there already is a query, close it.
@@ -115,7 +115,7 @@ Class Database {
 	}
 
 	// Select a Table.
-	public function selectTable($table){
+	public function selectTable($table=""){
 		$this->query("SELECT * FROM `$table`");
 
 		// If there aren't any PDO errors, return true.
@@ -130,7 +130,7 @@ Class Database {
 	}
 
 	// Insert a row into the specified table.
-	public function insertInto($table, $into_arr, $values_arr){
+	public function insertInto($table="", $into_arr=array(), $values_arr=array()){
 		$this->_tableSelected=false; // To prevent future errors with fetching Association.
 		$into=$values="";
 
@@ -172,7 +172,7 @@ Class Database {
 	}
 
 	// Delete a row from the specified table.
-	public function deleteFrom($table, $where_arr){
+	public function deleteFrom($table="", $where_arr=array()){
 		$this->_tableSelected=false; // To prevent future errors with fetching Association.
 		$where_sql="";
 
