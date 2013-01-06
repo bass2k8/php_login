@@ -3,3 +3,9 @@ WHAT TO DO
 
 -> Set default variables for functions, inside the brackets. I.e.: function example($value="").
 ***-> Finish deleteFrom() method.***
+-> Implement WHERE functionality to selectTable() method.
+-> Implement ORDER BY functionality to selectTable() method.
+-> Implement the option to choose either AND/OR when doing WHERE clauses.
+	-> selectTable()
+	-> deleteFrom()
+-> Create method updateTable().
