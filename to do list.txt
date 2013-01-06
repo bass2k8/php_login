@@ -1,0 +1,5 @@
+WHAT TO DO
+----------
+
+-> Set default variables for functions, inside the brackets. I.e.: function example($value="").
+***-> Finish deleteFrom() method.***

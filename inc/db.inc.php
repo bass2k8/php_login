@@ -172,16 +172,27 @@ Class Database {
 	}
 
 	// Delete a row from the specified table.
-	public function deleteFrom($table, $columns_arr, $values_arr){
-		$columns=$values="";
+	public function deleteFrom($table, $where_arr){
+		$this->_tableSelected=false; // To prevent future errors with fetching Association.
+		$where_sql="";
 
 		// If both variables are arrays, continue.
-		if(is_array($into_arr) && is_array($values_arr)){
-			// If the count of both arrays match, continue.
-			if(count($into_arr, COUNT_RECURSIVE)==count($values_arr, COUNT_RECURSIVE)){
+		if(is_array($where_arr)){
+			// Go through where_arr array.
+			foreach($where_arr as $wa){
+				$where_sql .= "`".$wa[0]."`='".$wa[1]."' AND ";
+			}
+			$where_sql=substr($where_sql, 0, -5); // Remove "AND" and white space.
 
+			// SQL statement.
+			$this->query("DELETE FROM `$table` WHERE $where_sql");
+
+			// If there aren't any PDO errors, return true.
+			if(!$this->_PDOErrors()){
+				if($this->_logging) $this->_log->addToLog("Deleted row from <strong>".$table."</strong> successfully.");
+				return true;
 			} else {
-				if($this->_logging) $this->_log->addToLog("Array count does not match.");
+				if($this->_logging) $this->_log->addToLog("Could not delete from <strong>".$table."</strong>.");
 				return false;
 			}
 		} else {

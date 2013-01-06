@@ -3,12 +3,20 @@
 require_once("inc/db.inc.php");
 
 $db = new Database("php_login", true);
-$db->selectTable("personal");
 
-//$into = array("user_id", "con_email_address");
-//$values = array("1", "bassatcollege@gmail.com");
-//$db->insertInto("contact", $into, $values);
+$into = array("user_name", "user_password");
+$values = array("bass2k8", md5("password"));
+$db->insertInto("user", $into, $values);
 
+$db->selectTable("user");
+while($row = $db->fetchAssociation()) {
+	print_r($row);
+}
+
+$where = array(array("user_name", "bass2k8"));
+$db->deleteFrom("user", $where);
+
+$db->selectTable("user");
 while($row = $db->fetchAssociation()) {
 	print_r($row);
 }
