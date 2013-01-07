@@ -9,5 +9,5 @@ WHAT TO DO
 	-> selectTable()
 	-> deleteFrom()
 ***-> Create method updateTable().***
--> Finish method updateTabe().
+-> Finish method updateTable().
 -> For the insertInto() method, merge the into and values array into one array.
