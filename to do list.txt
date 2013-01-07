@@ -8,4 +8,6 @@ WHAT TO DO
 -> Implement the option to choose either AND/OR when doing WHERE clauses.
 	-> selectTable()
 	-> deleteFrom()
--> Create method updateTable().
+***-> Create method updateTable().***
+-> Finish method updateTabe().
+-> For the insertInto() method, merge the into and values array into one array.

@@ -200,6 +200,32 @@ Class Database {
 			return false;
 		}
 	}
+
+	// Update a row in the specified table.
+	public function updateTable($table="", $set_arr=array(), $where_arr=array()){
+		$this->_tableSelected=false; // To prevent future errors with fetching Association.
+		$set_sql=$where_sql="";
+
+		// If both variables are arrays, continue.
+		if(is_array($set_arr) && is_array($where_arr)){
+			
+
+			// SQL statement.
+			$this->query("UPDATE `$table` SET $set_sql WHERE $where_sql");
+
+			// If there aren't any PDO errors, return true.
+			if(!$this->_PDOErrors()){
+				if($this->_logging) $this->_log->addToLog("Updated row in <strong>".$table."</strong> successfully.");
+				return true;
+			} else {
+				if($this->_logging) $this->_log->addToLog("Could not update row in <strong>".$table."</strong>.");
+				return false;
+			}
+		} else {
+			if($this->_logging) $this->_log->addToLog("An array was not supplied.");
+			return false;
+		}
+	}
 }
 
 ?>
