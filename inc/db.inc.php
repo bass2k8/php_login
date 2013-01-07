@@ -208,7 +208,17 @@ Class Database {
 
 		// If both variables are arrays, continue.
 		if(is_array($set_arr) && is_array($where_arr)){
-			
+			// Go through set_arr array.
+			foreach($set_arr as $sa){
+				$set_sql .= "`".$sa[0]."`='".$sa[1]."', ";
+			}
+			$set_sql=substr($set_sql, 0, -2); // Remove comma and white space.
+
+			// Go through where_arr array.
+			foreach($where_arr as $wa){
+				$where_sql .= "`".$wa[0]."`='".$wa[1]."' AND ";
+			}
+			$where_sql=substr($where_sql, 0, -5); // Remove "AND" and white space.
 
 			// SQL statement.
 			$this->query("UPDATE `$table` SET $set_sql WHERE $where_sql");

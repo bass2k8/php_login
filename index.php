@@ -21,6 +21,15 @@ while($row = $db->fetchAssociation()) {
 	print_r($row);
 }
 
+$set = array(array("user_password", md5("asdmkasdmlkdm")));
+$where = array(array("user_name", "bass2k8"));
+$db->updateTable("user", $set, $where);
+
+$db->selectTable("user");
+while($row = $db->fetchAssociation()) {
+	print_r($row);
+}
+
 echo "Hello World";
 
 ?>
