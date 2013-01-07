@@ -130,39 +130,29 @@ Class Database {
 	}
 
 	// Insert a row into the specified table.
-	public function insertInto($table="", $into_arr=array(), $values_arr=array()){
+	public function insertInto($table="", $into_arr=array()){
 		$this->_tableSelected=false; // To prevent future errors with fetching Association.
-		$into=$values="";
+		$into_sql=$values_sql="";
 
 		// If both variables are arrays, continue.
-		if(is_array($into_arr) && is_array($values_arr)){
-			// If the count of both arrays match, continue.
-			if(count($into_arr, COUNT_RECURSIVE)==count($values_arr, COUNT_RECURSIVE)){
-				// Go through into_arr array.
-				foreach($into_arr as $ia){
-					$into .= "`".$ia."`, ";  
-				}
-				$into=substr($into, 0, -2); // Remove trailing comma and white space.
+		if(is_array($into_arr)){
+			// Go through into_arr array.
+			foreach($into_arr as $ia){
+				$into_sql .= "`".$ia[0]."`, ";
+				$values_sql .= "'".$ia[1]."', ";
+			}
+			$into_sql=substr($into_sql, 0, -2); // Remove comma and white space.
+			$values_sql=substr($values_sql, 0, -2); // Remove comma and white space.
 
-				// Go through values_arr array.
-				foreach($values_arr as $va){
-					$values .= "'".$va."', ";
-				}
-				$values=substr($values, 0, -2); // Remove trailing comma and white space.
+			// SQL statement.
+			$this->query("INSERT INTO `$table` ($into_sql) VALUES ($values_sql)");
 
-				// SQL statement.
-				$this->query("INSERT INTO `$table` ($into) VALUES ($values)");
-
-				// If there aren't any PDO errors, return true.
-				if(!$this->_PDOErrors()){
-					if($this->_logging) $this->_log->addToLog("Inserted into <strong>".$table."</strong> successfully.");
-					return true;
-				} else {
-					if($this->_logging) $this->_log->addToLog("Could not insert into <strong>".$table."</strong>.");
-					return false;
-				}
+			// If there aren't any PDO errors, return true.
+			if(!$this->_PDOErrors()){
+				if($this->_logging) $this->_log->addToLog("Inserted into <strong>".$table."</strong> successfully.");
+				return true;
 			} else {
-				if($this->_logging) $this->_log->addToLog("Array count does not match.");
+				if($this->_logging) $this->_log->addToLog("Could not insert into <strong>".$table."</strong>.");
 				return false;
 			}
 		} else {
