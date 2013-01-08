@@ -9,7 +9,9 @@ $into = array(array("user_name", "bass2k8"),
 			  array("user_password", md5("ksdfmsdlkfmsdlkfm")));
 $db->insertInto("user", $into);
 
-$db->selectTable("user");
+$where = array(array("user_name", "bass2k8"));
+$order = array("user_id", "ASC");
+$db->selectTable("user", $where, $order);
 while($row = $db->fetchAssociation()) {
 	print_r($row);
 }

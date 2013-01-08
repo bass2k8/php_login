@@ -115,16 +115,41 @@ Class Database {
 	}
 
 	// Select a Table.
-	public function selectTable($table=""){
-		$this->query("SELECT * FROM `$table`");
+	public function selectTable($table="", $where_arr=array(), $order_arr=array()){
+		$where_sql=$order_sql="";
 
-		// If there aren't any PDO errors, return true.
-		if(!$this->_PDOErrors()){
-			if($this->_logging) $this->_log->addToLog("Selected <strong>".$table."</strong> successfully.");
-			$this->_tableSelected=true;
-			return true;
+		// If variables are arrays, continue.
+		if(is_array($where_arr) && is_array($order_arr)){
+			// If where arguments are supplied.
+			if(count($where_arr, COUNT_RECURSIVE)!=0){
+				$where_sql=" WHERE ";
+
+				// Go through where_arr array.
+				foreach($where_arr as $wa){
+					$where_sql .= "`".$wa[0]."`='".$wa[1]."' AND ";
+				}
+				$where_sql=substr($where_sql, 0, -5); // Remove "AND" and white space.
+			}
+
+			// If order arguments are supplied.
+			if(count($order_arr, COUNT_RECURSIVE)!=0){
+				$order_sql=" ORDER BY `".$order_arr[0]."` ".$order_arr[1];
+			}
+
+			// SQL statement.
+			$this->query("SELECT * FROM `$table`".$where_sql.$order_sql);
+
+			// If there aren't any PDO errors, return true.
+			if(!$this->_PDOErrors()){
+				if($this->_logging) $this->_log->addToLog("Selected <strong>".$table."</strong> successfully.");
+				$this->_tableSelected=true;
+				return true;
+			} else {
+				if($this->_logging) $this->_log->addToLog("Could not select <strong>".$table."</strong>.");
+				return false;
+			}
 		} else {
-			if($this->_logging) $this->_log->addToLog("Could not select <strong>".$table."</strong>.");
+			if($this->_logging) $this->_log->addToLog("An array was not supplied.");
 			return false;
 		}
 	}
@@ -134,7 +159,7 @@ Class Database {
 		$this->_tableSelected=false; // To prevent future errors with fetching Association.
 		$into_sql=$values_sql="";
 
-		// If both variables are arrays, continue.
+		// If variables are arrays, continue.
 		if(is_array($into_arr)){
 			// Go through into_arr array.
 			foreach($into_arr as $ia){
@@ -166,7 +191,7 @@ Class Database {
 		$this->_tableSelected=false; // To prevent future errors with fetching Association.
 		$where_sql="";
 
-		// If both variables are arrays, continue.
+		// If variables are arrays, continue.
 		if(is_array($where_arr)){
 			// Go through where_arr array.
 			foreach($where_arr as $wa){
@@ -196,7 +221,7 @@ Class Database {
 		$this->_tableSelected=false; // To prevent future errors with fetching Association.
 		$set_sql=$where_sql="";
 
-		// If both variables are arrays, continue.
+		// If variables are arrays, continue.
 		if(is_array($set_arr) && is_array($where_arr)){
 			// Go through set_arr array.
 			foreach($set_arr as $sa){
