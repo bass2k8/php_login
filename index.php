@@ -15,6 +15,7 @@ $db->selectTable("user", $where, $order);
 while($row = $db->fetchAssociation()) {
 	print_r($row);
 }
+echo "<br />Number of Rows: ".$db->numberOfRows()."<br />";
 
 /* TESTING updateTable() method. */
 $set = array(array("user_password", md5("asdmkasdmlkdm")));

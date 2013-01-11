@@ -86,6 +86,33 @@ Class Database {
 		}
 	}
 
+	// Return the number of rows affected by the last SQL statement.
+	public function numberOfRows() {
+		// If a query has been executed, continue.
+		if($this->_query){
+			// If table is selected, fetch the association.
+			if($this->_tableSelected){
+				$numberOfRows=$this->_query->rowCount();
+
+				// If there aren't any PDO errors, return the association.
+				if(!$this->_PDOErrors()){
+					if($this->_logging) $this->_log->addToLog("Returned number of rows successfully.");
+					return $numberOfRows;
+				} else {
+					if($this->_logging) $this->_log->addToLog("Cannot return number of rows; an error occured.");
+					return false;
+				}
+			} else {
+				if($this->_logging) $this->_log->addToLog("Cannot return number of rows; no table is selected.");
+				return false;
+			}
+			
+		} else {
+			if($this->_logging) $this->_log->addToLog("Cannot return number of rows; there is no query.");
+			return false;
+		}
+	}
+
 	// Fetch association.
 	public function fetchAssociation(){
 		// If a query has been executed, continue.
