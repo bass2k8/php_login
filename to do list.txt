@@ -14,3 +14,4 @@ WHAT TO DO
 ***-> For the insertInto() method, merge the into and values array into one array.***
 ***-> Create method numberOfRows().***
 ***-> Finish method numberOfRows().***
+-> Allow numberOfRows() to return true if it has more than 0 rows, and false if it has zero rows.
