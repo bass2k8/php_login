@@ -142,7 +142,7 @@ Class Database {
 	}
 
 	// Select a Table.
-	public function selectTable($table="", $where_arr=array(), $order_arr=array()){
+	public function selectTable($table="", $order_arr=array(), $where_arr=array()){
 		$where_sql=$order_sql="";
 
 		// If variables are arrays, continue.
