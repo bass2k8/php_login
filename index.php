@@ -2,16 +2,29 @@
 
 require_once("inc/db.inc.php");
 
-$db = new Database("php_login", true);
+$db = new Database(true);
+
+/* TESTING selectFrom() method */
+$options=array(
+	"WHERE" => array(
+			array("user_name", "%bass%", "LIKE")
+		),
+	"ORDER BY" => array("user_name", "ASC")
+	);
+$db->selectTable("user", $options);
 
 /* TESTING insertInto() method. */
 $into = array(array("user_name", "bass2k8"),
 			  array("user_password", md5("ksdfmsdlkfmsdlkfm")));
 $db->insertInto("user", $into);
 
-$where = array(array("user_name", "bass2k8"));
-$order = array("user_id", "ASC");
-$db->selectTable("user", $where, $order);
+$options=array(
+	"WHERE" => array(
+			array("user_name", "bass2k8")
+		),
+	"ORDER BY" => array("user_id", "ASC")
+	);
+$db->selectTable("user", $options);
 while($row = $db->fetchAssociation()) {
 	print_r($row);
 }

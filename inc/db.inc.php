@@ -8,15 +8,13 @@ Class Database {
 	private $_log; // Log object.
 	private $_logging=false; // Define whether to output logging or not.
 
-	private $_dbName; // Name of the Database.
 	private $_db; // PDO database object.
 	private $_query; // SQL Query.
 	
 	private $_tableSelected; // Whether a table is selected or not.
 
-	public function __construct($dbName="", $logging=false){
+	public function __construct($logging=false){
 		// Initialising the variables.
-		$this->_dbName = $dbName;
 		$this->_query=$this->_tableSelected=false;
 		$this->_logging=$logging;
 
@@ -38,13 +36,13 @@ Class Database {
 	// Connecting to the Database Server.
 	private function _connect(){
 		// Create a PDO object.
-		$this->_db = new PDO("mysql:host=".DB_SERVER.";dbname=".$this->_dbName, DB_USER, DB_PASS);
+		$this->_db = new PDO("mysql:host=".DB_SERVER.";dbname=".DB_DATABASE, DB_USER, DB_PASS);
 		$this->_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Set error mode.
 
 		// If there aren't any PDO errors, return true.
 		if(!$this->_PDOErrors()){
 			if($this->_logging) $this->_log->addToLog("Connected to <strong>".DB_SERVER."</strong> successfully.");
-			if($this->_logging) $this->_log->addToLog("Selected the database <strong>".$this->_dbName."</strong> successfully.");
+			if($this->_logging) $this->_log->addToLog("Selected the database <strong>".DB_DATABASE."</strong> successfully.");
 			return true;
 		} else {
 			if($this->_logging) $this->_log->addToLog("Could not connect to the Database server.");
@@ -142,29 +140,41 @@ Class Database {
 	}
 
 	// Select a Table.
-	public function selectTable($table="", $order_arr=array(), $where_arr=array()){
-		$where_sql=$order_sql="";
+	public function selectTable($table="", $options_arr=array()){
+		$options_sql="";
 
-		// If variables are arrays, continue.
-		if(is_array($where_arr) && is_array($order_arr)){
-			// If where arguments are supplied.
-			if(count($where_arr, COUNT_RECURSIVE)!=0){
-				$where_sql=" WHERE ";
+		// If supplied options is an array.
+		if(is_array($options_arr)){
+			// If options array isn't empty.
+			if(count($options_arr, COUNT_RECURSIVE)!=0){
+				// If WHERE option is in array.
+				if(array_key_exists('WHERE', $options_arr)){
+					// If WHERE arguments are supplied.
+					if(count($options_arr["WHERE"], COUNT_RECURSIVE)!=0){
+						$options_sql.=" WHERE ";
 
-				// Go through where_arr array.
-				foreach($where_arr as $wa){
-					$where_sql .= "`".$wa[0]."`='".$wa[1]."' AND ";
+						// Go through where_arr array.
+						foreach($options_arr["WHERE"] as $where){
+							if(isset($where[2])) $operator=" ".$where[2]." ";
+							else $operator="=";
+							$options_sql .= "`".$where[0]."`".$operator."'".$where[1]."' AND ";
+						}
+						$options_sql=substr($options_sql, 0, -5); // Remove "AND" and white space.
+					}
 				}
-				$where_sql=substr($where_sql, 0, -5); // Remove "AND" and white space.
-			}
 
-			// If order arguments are supplied.
-			if(count($order_arr, COUNT_RECURSIVE)!=0){
-				$order_sql=" ORDER BY `".$order_arr[0]."` ".$order_arr[1];
+				// If ORDER BY option is in array.
+				if(array_key_exists('ORDER BY', $options_arr)){
+					// If ORDER BY arguments are supplied.
+					if(count($options_arr["ORDER BY"], COUNT_RECURSIVE)!=0){
+						$options_sql.=" ORDER BY `".$options_arr["ORDER BY"][0]."` ".$options_arr["ORDER BY"][1];
+					}
+				}
+
 			}
 
 			// SQL statement.
-			$this->query("SELECT * FROM `$table`".$where_sql.$order_sql);
+			$this->query("SELECT * FROM `$table`".$options_sql);
 
 			// If there aren't any PDO errors, return true.
 			if(!$this->_PDOErrors()){
