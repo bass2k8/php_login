@@ -269,23 +269,28 @@ Class Database {
 	public function updateTable($table="", $set_arr=array(), $where_arr=array()){
 		$this->_tableSelected=false; // To prevent future errors with fetching Association.
 		$set_sql=$where_sql="";
+		$params=array();
 
 		// If variables are arrays, continue.
 		if(is_array($set_arr) && is_array($where_arr)){
 			// Go through set_arr array.
 			foreach($set_arr as $sa){
-				$set_sql .= "`".$sa[0]."`='".$sa[1]."', ";
+				$param="set_".$sa[0];
+				array_push($params, array(":".$param, $sa[1]));
+				$set_sql .= "`".$sa[0]."`=:".$param.", ";
 			}
 			$set_sql=substr($set_sql, 0, -2); // Remove comma and white space.
 
 			// Go through where_arr array.
 			foreach($where_arr as $wa){
-				$where_sql .= "`".$wa[0]."`='".$wa[1]."' AND ";
+				$param="where_".$sa[0];
+				array_push($params, array(":".$param, $wa[1]));
+				$where_sql .= "`".$wa[0]."`=:".$param." AND ";
 			}
 			$where_sql=substr($where_sql, 0, -5); // Remove "AND" and white space.
 
 			// SQL statement.
-			$this->query("UPDATE `$table` SET $set_sql WHERE $where_sql");
+			$this->query("UPDATE `$table` SET $set_sql WHERE $where_sql", $params);
 
 			// If there aren't any PDO errors, return true.
 			if(!$this->_PDOErrors()){
