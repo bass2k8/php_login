@@ -237,17 +237,19 @@ Class Database {
 	public function deleteFrom($table="", $where_arr=array()){
 		$this->_tableSelected=false; // To prevent future errors with fetching Association.
 		$where_sql="";
+		$params=array();
 
 		// If variables are arrays, continue.
 		if(is_array($where_arr)){
 			// Go through where_arr array.
 			foreach($where_arr as $wa){
-				$where_sql .= "`".$wa[0]."`='".$wa[1]."' AND ";
+				array_push($params, array(":".$wa[0], $wa[1]));
+				$where_sql .= "`".$wa[0]."`=:".$wa[0]." AND ";
 			}
 			$where_sql=substr($where_sql, 0, -5); // Remove "AND" and white space.
 
 			// SQL statement.
-			$this->query("DELETE FROM `$table` WHERE $where_sql");
+			$this->query("DELETE FROM `$table` WHERE $where_sql", $params);
 
 			// If there aren't any PDO errors, return true.
 			if(!$this->_PDOErrors()){
