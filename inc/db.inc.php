@@ -203,19 +203,21 @@ Class Database {
 	public function insertInto($table="", $into_arr=array()){
 		$this->_tableSelected=false; // To prevent future errors with fetching Association.
 		$into_sql=$values_sql="";
+		$params=array();
 
 		// If variables are arrays, continue.
 		if(is_array($into_arr)){
 			// Go through into_arr array.
 			foreach($into_arr as $ia){
+				array_push($params, array(":".$ia[0], $ia[1]));
 				$into_sql .= "`".$ia[0]."`, ";
-				$values_sql .= "'".$ia[1]."', ";
+				$values_sql .= ":".$ia[0].", ";
 			}
 			$into_sql=substr($into_sql, 0, -2); // Remove comma and white space.
 			$values_sql=substr($values_sql, 0, -2); // Remove comma and white space.
 
 			// SQL statement.
-			$this->query("INSERT INTO `$table` ($into_sql) VALUES ($values_sql)");
+			$this->query("INSERT INTO `$table` ($into_sql) VALUES ($values_sql)", $params);
 
 			// If there aren't any PDO errors, return true.
 			if(!$this->_PDOErrors()){
