@@ -61,7 +61,7 @@ Class Database {
 	}
 
 	// Querying the Database.
-	public function query($sql=""){
+	public function query($sql="", $params=array()){
 		$error_status=false;
 
 		// If there already is a query, close it.
@@ -69,7 +69,14 @@ Class Database {
 		
 		// Attempt to query the SQL.
 		try {
-			$this->_query = $this->_db->query($sql);
+			if(count($params, COUNT_RECURSIVE)>0){
+				$this->_query=$this->_db->prepare($sql);
+				foreach($params as $p){
+					$this->_query->bindParam($p[0], $p[1]);
+					if($this->_logging) $this->_log->addToLog("Param <strong>".$p[1].":</strong> was binded to <strong>".$p[0]."</strong>.");
+				}
+				$this->_query->execute();
+			} else $this->_query = $this->_db->query($sql);
 		} catch(PDOException $e){
 			// If an error was caught, set error_status to true and return false.
 			$error_status=true;
@@ -142,6 +149,7 @@ Class Database {
 	// Select a Table.
 	public function selectTable($table="", $options_arr=array()){
 		$options_sql="";
+		$params=array();
 
 		// If supplied options is an array.
 		if(is_array($options_arr)){
@@ -152,12 +160,12 @@ Class Database {
 					// If WHERE arguments are supplied.
 					if(count($options_arr["WHERE"], COUNT_RECURSIVE)!=0){
 						$options_sql.=" WHERE ";
-
 						// Go through where_arr array.
 						foreach($options_arr["WHERE"] as $where){
 							if(isset($where[2])) $operator=" ".$where[2]." ";
 							else $operator="=";
-							$options_sql .= "`".$where[0]."`".$operator."'".$where[1]."' AND ";
+							array_push($params, array(":".$where[0], $where[1]));
+							$options_sql .= "`".$where[0]."`".$operator.":".$where[0]." AND ";
 						}
 						$options_sql=substr($options_sql, 0, -5); // Remove "AND" and white space.
 					}
@@ -174,7 +182,7 @@ Class Database {
 			}
 
 			// SQL statement.
-			$this->query("SELECT * FROM `$table`".$options_sql);
+			$this->query("SELECT * FROM `$table`".$options_sql, $params);
 
 			// If there aren't any PDO errors, return true.
 			if(!$this->_PDOErrors()){
