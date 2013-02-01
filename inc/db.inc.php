@@ -5,8 +5,8 @@ require_once("log.inc.php");
 
 Class Database {
 
-	private $_log; // Log object.
-	private $_logging=false; // Define whether to output logging or not.
+	protected $_log; // Log object.
+	protected $_logging=false; // Define whether to output logging or not.
 
 	private $_db; // PDO database object.
 	private $_query; // SQL Query.
