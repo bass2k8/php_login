@@ -72,7 +72,8 @@ Class Database {
 			if(count($params, COUNT_RECURSIVE)>0){
 				$this->_query=$this->_db->prepare($sql);
 				foreach($params as $p){
-					$this->_query->bindParam($p[0], $p[1]);
+					if(isset($p[2])) $this->_query->bindParam($p[0], $p[1], $p[2]);
+					else $this->_query->bindParam($p[0], $p[1]);
 					if($this->_logging) $this->_log->addToLog("Param <strong>".$p[1].":</strong> was binded to <strong>".$p[0]."</strong>.");
 				}
 				$this->_query->execute();
@@ -209,7 +210,8 @@ Class Database {
 		if(is_array($into_arr)){
 			// Go through into_arr array.
 			foreach($into_arr as $ia){
-				array_push($params, array(":".$ia[0], $ia[1]));
+				if(isset($ia[2])) array_push($params, array(":".$ia[0], $ia[1], $ia[2]));
+				else array_push($params, array(":".$ia[0], $ia[1]));
 				$into_sql .= "`".$ia[0]."`, ";
 				$values_sql .= ":".$ia[0].", ";
 			}

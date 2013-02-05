@@ -14,8 +14,8 @@ $options=array(
 $db->selectTable("user", $options);
 
 /* TESTING insertInto() method. */
-$into = array(array("user_name", "bass2k8"),
-			  array("user_password", md5("ksdfmsdlkfmsdlkfm")));
+$into = array(array("user_name", "bass2k8", PDO::PARAM_STR),
+			  array("user_password", md5("ksdfmsdlkfmsdlkfm"), PDO::PARAM_STR));
 $db->insertInto("user", $into);
 
 $options=array(
