@@ -4,16 +4,10 @@ require_once("inc/db.inc.php");
 
 $db = new Database(true);
 
-/* TESTING selectFrom() method */
-$options=array(
-	"WHERE" => array(
-			array("user_name", "%bass%", "LIKE")
-		),
-	"ORDER BY" => array("user_name", "ASC")
-	);
-$db->selectTable("user", $options);
-
 /* TESTING insertInto() method. */
+$into = array(array("user_name", "bass2k8", PDO::PARAM_STR),
+			  array("user_password", md5("ksdfmsdlkfmsdlkfm"), PDO::PARAM_STR));
+$db->insertInto("user", $into);
 $into = array(array("user_name", "bass2k8", PDO::PARAM_STR),
 			  array("user_password", md5("ksdfmsdlkfmsdlkfm"), PDO::PARAM_STR));
 $db->insertInto("user", $into);
@@ -29,6 +23,19 @@ while($row = $db->fetchAssociation()) {
 	print_r($row);
 }
 echo "<br />Number of Rows: ".$db->numberOfRows()."<br />";
+
+/* TESTING selectFrom() method */
+$options=array(
+	"WHERE" => array(
+			array("user_name", "%bass%", "LIKE")
+		),
+	"ORDER BY" => array("user_name", "ASC"),
+	"LIMIT" => array(0, 1)
+	);
+$db->selectTable("user", $options);
+while($row = $db->fetchAssociation()) {
+	print_r($row);
+}
 
 /* TESTING updateTable() method. */
 $set = array(array("user_password", md5("asdmkasdmlkdm")));

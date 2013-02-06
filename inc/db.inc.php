@@ -180,6 +180,14 @@ Class Database {
 					}
 				}
 
+				// If LIMIT option is in array.
+				if(array_key_exists('LIMIT', $options_arr)){
+					// If LIMIT arguments are supplied.
+					if(count($options_arr["LIMIT"], COUNT_RECURSIVE)!=0){
+						$options_sql.=" LIMIT ".$options_arr["LIMIT"][0].", ".$options_arr["LIMIT"][1];
+					}
+				}
+
 			}
 
 			// SQL statement.
