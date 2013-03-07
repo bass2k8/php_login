@@ -313,7 +313,7 @@ Class Database {
 				 * If there aren't any PDO errors, return the association.
 				 */
 				if(!$this->_PDOErrors()){
-					if($this->_logging) $this->_log->addToLog("Returned number of rows successfully.");
+					if($this->_logging) $this->_log->addToLog("Returned ".$numberOfRows." row(s) successfully.");
 					return $numberOfRows;
 				} else {
 					if($this->_logging) $this->_log->addToLog("Cannot return number of rows; an error occured.");
@@ -732,5 +732,3 @@ Class Database {
  * c-hanging-comment-ender-p: nil
  * End:
  */
-
-?>
