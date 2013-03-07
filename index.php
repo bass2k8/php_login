@@ -1,6 +1,6 @@
 <?php
 
-require_once("inc/db.inc.php");
+require_once("inc/Database.class.php");
 
 $db = new Database(true);
 
@@ -16,7 +16,8 @@ $options=array(
 	"WHERE" => array(
 			array("user_name", "bass2k8")
 		),
-	"ORDER BY" => array("user_id", "ASC")
+	"ORDER BY" => array("user_id", "ASC"),
+	"COLUMN" => array("user_name", "user_id")
 	);
 $db->selectTable("user", $options);
 while($row = $db->fetchAssociation()) {
